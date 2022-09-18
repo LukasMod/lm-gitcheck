@@ -1,113 +1,63 @@
 import * as React from 'react'
 import { TouchableOpacity, ViewStyle, TextStyle, Text, View, ImageStyle, Image } from 'react-native'
-import {
-  color,
-  rounding,
-  spacing,
-  tpMediumDescriptionM,
-  tpMediumDescriptionS,
-  tpMediumPrimaryM,
-  tpMediumTextM,
-} from '../../theme'
+import { color, rounding, spacing, tpBoldTextL, tpMediumTextM } from '../../theme'
 import { HomeScreenNavProp, IRepo } from '../../types'
-import { metrics, formatDateString } from '../../utils'
-import { Icon } from '../icon/icon'
-import { icons, Icons } from '../icon/icons'
-// import { ImageUser } from '../image/image-user'
+import { metrics } from '../../utils'
 import { observer } from 'mobx-react-lite'
 import { useNavigation } from '@react-navigation/native'
-import { useStores } from '../../hooks'
-import { ModalLoading } from '../modal/modal-loading'
 
 const CONTAINER: ViewStyle = {
-  marginVertical: 15,
-}
-const HEADER_CONTAINER: ViewStyle = {
   flexDirection: 'row',
-  alignItems: 'center',
+  borderColor: color.border,
+  borderWidth: 1,
+  borderRadius: rounding.regular,
+  marginVertical: spacing.item / 2,
 }
 
-const HEADER_TEXT: ViewStyle = {
-  ...tpMediumTextM,
-  marginLeft: spacing.item,
-}
-const TITLE_CONTAINER: ViewStyle = {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+const TEXT_CONTAINER: ViewStyle = {
+  padding: spacing.item,
+  flex: 1,
+  justifyContent: 'center',
 }
 
 const TITLE_TEXT: TextStyle = {
+  ...tpBoldTextL,
+}
+const DESCRIPTION_TEXT: TextStyle = {
   ...tpMediumTextM,
-  marginLeft: spacing.item,
 }
 
 const IMAGE: ImageStyle = {
-  width: '100%',
-  tintColor: undefined,
-  borderRadius: rounding.regular,
-  marginVertical: spacing.item,
-}
-const ICON_LIKED: ImageStyle = {
-  tintColor: color.error,
-}
-const DESCRIPTION_CONTAINER: ViewStyle = {
-  paddingHorizontal: spacing.item,
-}
-const DESCRIPTION_FOOTER_CONTAINER: ViewStyle = {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginTop: spacing.itemSmall,
-}
-
-const DESCRIPTION_TEXT: TextStyle = {
-  ...tpMediumDescriptionM,
-}
-const DESCRIPTION_DATE_TEXT: TextStyle = {
-  ...tpMediumDescriptionS,
-}
-
-const DESCRIPTION_MORE_TEXT: TextStyle = {
-  ...tpMediumPrimaryM,
+  width: 78,
+  height: 78,
+  resizeMode: 'contain',
+  borderTopRightRadius: rounding.regular,
+  borderBottomRightRadius: rounding.regular,
 }
 
 export interface IRepoItem {
   item: IRepo
-  open?: boolean
 }
 
-export const RepoItem = observer(({ item, open }: IRepoItem) => {
+export const RepoItem = observer(({ item }: IRepoItem) => {
   const navigation = useNavigation<HomeScreenNavProp>()
 
+  const navigateToDetails = () => {
+    navigation.navigate('Details', { repoId: item.id })
+  }
+
   return (
-    <View style={CONTAINER}>
-      {/* <View style={HEADER_CONTAINER}>
-        <ImageUser imageUrl={item.avatarImageUrl} />
-        <Text style={HEADER_TEXT}>{item.name}</Text>
-      </View>
-      {!!item.imageUrl && <Image style={IMAGE} source={icons[Icons.IMAGE_VIEW]} />}
-      <View style={TITLE_CONTAINER}>
-        <Text style={TITLE_TEXT}>{item.title}</Text>
-        <Icon
-          icon={item.isLiked ? Icons.HEART_RED : Icons.HEART}
-          style={item.isLiked && ICON_LIKED}
-          onPress={onPressLike}
-        />
-      </View>
-      <View style={DESCRIPTION_CONTAINER}>
-        <Text style={DESCRIPTION_TEXT} numberOfLines={open ? undefined : 2}>
+    <TouchableOpacity
+      style={CONTAINER}
+      activeOpacity={metrics.activeOpacity}
+      onPress={navigateToDetails}>
+      <View style={TEXT_CONTAINER}>
+        <Text style={TITLE_TEXT}>{item.name}</Text>
+        <Text style={DESCRIPTION_TEXT} numberOfLines={1}>
           {item.description}
         </Text>
-        <View style={DESCRIPTION_FOOTER_CONTAINER}>
-          <Text style={DESCRIPTION_DATE_TEXT}>{formatDateString(item.date)}</Text>
-          {!open && (
-            <TouchableOpacity onPress={onPressMore} activeOpacity={metrics.activeOpacity}>
-              <Text style={DESCRIPTION_MORE_TEXT}>Więcej</Text>
-            </TouchableOpacity>
-          )}
-        </View>
       </View>
-      <ModalLoading show={showLoading} /> */}
-    </View>
+      <Image source={{ uri: item.owner.avatar_url }} style={IMAGE} />
+    </TouchableOpacity>
   )
 })

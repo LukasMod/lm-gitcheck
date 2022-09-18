@@ -5,6 +5,7 @@ import { ActivityIndicator, FlatList, ViewStyle, Text } from 'react-native'
 import { useStores } from '../../hooks'
 import { color, spacing } from '../../theme'
 import { IRepo } from '../../types'
+import { RepoItem } from './repo-item'
 const CONTENT: ViewStyle = {
   backgroundColor: color.background,
   paddingHorizontal: spacing.screenTop,
@@ -13,10 +14,10 @@ const LOADING: ViewStyle = {
   marginVertical: 30,
 }
 
-const keyExtractor = (item: IRepo) => item.id
+const keyExtractor = (item: IRepo) => `${item.id}`
 
 const renderItem = ({ item }: { item: IRepo }) => {
-  // return <RepoItem item={item} />
+  return <RepoItem item={item} />
 }
 
 class LocalStore {
@@ -32,21 +33,26 @@ class LocalStore {
 }
 
 export const RepoList = observer(() => {
+  const {
+    stores: {
+      repoStore: { repos },
+    },
+  } = useStores()
+
   return (
-    // <FlatList
-    //   contentContainerStyle={CONTENT}
-    //   data={repos}
-    //   // renderItem={renderItem}
-    //   keyExtractor={keyExtractor}
-    //   onRefresh={onRefresh}
-    //   refreshing={isRefreshing}
-    //   onEndReached={loadMorePosts}
-    //   onEndReachedThreshold={0.7}
-    //   ListFooterComponent={
-    //     repoLoading && <ActivityIndicator style={LOADING} color={color.primary} />
-    //   }
-    //   ListEmptyComponent={<Text>Brak danych</Text>}
-    // />
-    <></>
+    <FlatList
+      contentContainerStyle={CONTENT}
+      data={repos}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      // onRefresh={onRefresh}
+      // refreshing={isRefreshing}
+      // onEndReached={loadMorePosts}
+      onEndReachedThreshold={0.7}
+      // ListFooterComponent={
+      //   repoLoading && <ActivityIndicator style={LOADING} color={color.primary} />
+      // }
+      ListEmptyComponent={<Text>Brak danych</Text>}
+    />
   )
 })

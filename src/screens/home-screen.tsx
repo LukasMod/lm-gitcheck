@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect } from 'react'
 import { Text, TouchableOpacity, View, ViewStyle } from 'react-native'
-import { InputSearchbar } from '../components'
+import { InputSearchbar, RepoList } from '../components'
 import { spacing } from '../theme'
 import { HomeScreenNavProp } from '../types/navigation'
 import { observer, useLocalObservable } from 'mobx-react-lite'
@@ -38,20 +38,14 @@ export const HomeScreen = observer(() => {
   } = useStores()
 
   useEffect(() => {
-    // getRepos()
+    getRepos()
   }, [])
 
-  const navigateToDetails = () => {
-    navigation.navigate('Details')
-  }
 
   return (
     <View style={FULL}>
       <InputSearchbar setText={setSearchText} text={searchText} />
-      <TouchableOpacity onPress={navigateToDetails}>
-        <Text>next screen</Text>
-      </TouchableOpacity>
-      {/* <PostList /> */}
+      <RepoList />
     </View>
   )
 })

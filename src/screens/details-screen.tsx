@@ -1,8 +1,8 @@
 import { useNavigation, useRoute } from '@react-navigation/native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, ViewStyle, Text, TextStyle } from 'react-native'
 import { spacing } from '../theme'
-import { DetailsScreenRouteProp } from '../types/navigation'
+import { DetailsScreenRouteProp, DetailsScreenNavProp } from '../types/navigation'
 import { observer } from 'mobx-react-lite'
 
 import { useStores } from '../hooks'
@@ -17,6 +17,7 @@ const FULL: ViewStyle = {
 
 export const DetailsScreen = observer(() => {
   const route = useRoute<DetailsScreenRouteProp>()
+  const navigation = useNavigation<DetailsScreenNavProp>()
 
   const repoId = route.params?.repoId || ''
 
@@ -28,9 +29,12 @@ export const DetailsScreen = observer(() => {
 
   const repo = repos.find(r => r.id === repoId)
 
-  // if (!repo) {
-  //   return <Text style={TEXT_NO_DATA}>Brak danych</Text>
-  // }
+  useEffect(() => {
+    if (repo) {
+      navigation.setOptions({ headerTitle: repo.name })
+    }
+  }, [repo])
+
 
   return <View style={FULL}>{/* <RepoItem item={repo} open /> */}</View>
 })

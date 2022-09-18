@@ -39,7 +39,6 @@ export const HomeStackNavigator = observer(() => {
         name="Details"
         component={DetailsScreen}
         options={({ navigation }) => ({
-          headerTitle: '',
           headerLeft: () => {
             return <Icon onPress={navigation.goBack} icon={Icons.ARROW} />
           },
