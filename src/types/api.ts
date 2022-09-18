@@ -1,6 +1,6 @@
-import { IPost } from '.'
+import { IRepo } from '.'
 
-export type GetPostsType = {
-  data: IPost[]
+export type GetReposType = {
+  data: IRepo[]
   total: number
 }

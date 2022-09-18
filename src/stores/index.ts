@@ -1,1 +1,1 @@
-export * from './post-store'
+export * from './repo-store'

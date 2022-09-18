@@ -9,11 +9,11 @@ import {
   tpMediumPrimaryM,
   tpMediumTextM,
 } from '../../theme'
-import { HomeScreenNavProp, IPost } from '../../types'
+import { HomeScreenNavProp, IRepo } from '../../types'
 import { metrics, formatDateString } from '../../utils'
 import { Icon } from '../icon/icon'
 import { icons, Icons } from '../icon/icons'
-import { ImageUser } from '../image/image-user'
+// import { ImageUser } from '../image/image-user'
 import { observer } from 'mobx-react-lite'
 import { useNavigation } from '@react-navigation/native'
 import { useStores } from '../../hooks'
@@ -71,30 +71,13 @@ const DESCRIPTION_MORE_TEXT: TextStyle = {
   ...tpMediumPrimaryM,
 }
 
-export interface IPostItem {
-  item: IPost
+export interface IRepoItem {
+  item: IRepo
   open?: boolean
 }
 
-export const RepoItem = observer(({ item, open }: IPostItem) => {
+export const RepoItem = observer(({ item, open }: IRepoItem) => {
   const navigation = useNavigation<HomeScreenNavProp>()
-
-  // const {
-  //   stores: {
-  //     postStore: { toggleLikePost, likeLoading },
-  //   },
-  // } = useStores()
-
-  // const onPressMore = () => {
-  //   navigation.navigate('Post', { postId: item.id })
-  // }
-  // const onPressLike = () => {
-  //   toggleLikePost(item.id)
-  // }
-
-  // if (!item) return null
-
-  // const showLoading = likeLoading?.id === item.id && likeLoading?.isLoading
 
   return (
     <View style={CONTAINER}>

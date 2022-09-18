@@ -3,8 +3,9 @@ import { DetailsScreen, HomeScreen } from '../screens'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { HomeStackNavigatorParamList } from '../types/navigation'
 import { color, fontSize, typography } from '../theme'
-import { ButtonHeader, ImageUser } from '../components'
+import { Icon } from '../components'
 import { observer } from 'mobx-react-lite'
+import { Icons } from '../components/icon/icons'
 
 export const HomeStack = createNativeStackNavigator<HomeStackNavigatorParamList>()
 
@@ -30,19 +31,20 @@ export const HomeStackNavigator = observer(() => {
       <HomeStack.Screen
         name="Home"
         component={HomeScreen}
+        options={() => ({
+          headerShown: false,
+        })}
+      />
+      <HomeStack.Screen
+        name="Details"
+        component={DetailsScreen}
         options={({ navigation }) => ({
-          title: 'Gitcheck',
-          headerRight: () => <ImageUser withBorder />,
+          headerTitle: '',
           headerLeft: () => {
-            const onPressAddPost = () => {
-              navigation.navigate('CreatePost')
-            }
-
-            return <ButtonHeader onPress={onPressAddPost} title="Dodaj post" />
+            return <Icon onPress={navigation.goBack} icon={Icons.ARROW} />
           },
         })}
       />
-      <HomeStack.Screen name="Details" component={DetailsScreen} />
     </HomeStack.Navigator>
   )
 })

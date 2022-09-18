@@ -13,7 +13,7 @@ export interface IButtonHeader {
   title: string
 }
 
-export const ButtonHeader = observer(({ onPress, title }: IButtonHeader) => {
+export const Button = observer(({ onPress, title }: IButtonHeader) => {
   return (
     <TouchableOpacity activeOpacity={metrics.activeOpacity} onPress={onPress}>
       <Text style={TEXT}>{title}</Text>

@@ -7,5 +7,4 @@ export type HomeStackNavigatorParamList = {
 }
 
 export type HomeScreenNavProp = NativeStackNavigationProp<HomeStackNavigatorParamList, 'Home'>
-export type DetailsScreenNavProp = NativeStackNavigationProp<HomeStackNavigatorParamList, 'Details'>
 export type DetailsScreenRouteProp = RouteProp<HomeStackNavigatorParamList, 'Details'>

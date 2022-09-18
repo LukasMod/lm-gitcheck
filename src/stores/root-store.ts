@@ -1,11 +1,11 @@
-import PostStore from './post-store'
+import RepoStore from './repo-store'
 
 export interface Stores {
-  postStore: PostStore
+  repoStore: RepoStore
 }
 
 const stores = (store: RootStore): Stores => ({
-  postStore: new PostStore(store),
+  repoStore: new RepoStore(store),
 })
 
 class RootStore {
