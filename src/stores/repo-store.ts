@@ -1,10 +1,9 @@
 import { makeObservable, observable, action, flow } from 'mobx'
 import repoApi from '../services/repo-api'
-import { GetReposType, IRepo } from '../types'
-import { INCREMENT_DATA } from '../utils'
+import { GetReposResult, IRepo } from '../types'
 import RootStore from './root-store'
 
-export default class PostStore {
+export default class RepoStore {
   rootStore: RootStore
   repos: IRepo[] = []
   reposOffset = 0
@@ -24,6 +23,7 @@ export default class PostStore {
       resetReposOffset: action,
       setRepoLoading: action,
       setRepos: action,
+      setReposTotal: action,
     })
   }
 
@@ -43,35 +43,42 @@ export default class PostStore {
     this.repos = repos
   }
 
-  getRepos = flow(function* (this: PostStore, offset = 0, limit: number = INCREMENT_DATA) {
+  setReposTotal = (total: number) => {
+    this.reposTotal = total
+  }
+
+  getRepos = flow(function* (this: RepoStore, searchText: string, page: number, perPage?: number) {
     try {
       if (this.repoLoading) return
 
-      if (offset > this.reposTotal) {
-        console.log('reached getRepos total')
-        return
-      }
+      // if (offset > this.reposTotal) {
+      //   console.log('reached getRepos total')
+      //   return
+      // }
 
       this.setRepoLoading(true)
-      const response: GetReposType = yield repoApi.getRepos(offset, limit)
+      const response: GetReposResult = yield repoApi.getRepos('mobx', 1, 5)
+      if (response.kind !== 'ok') throw Error(response.kind)
 
-      this.reposTotal = response.total
+      this.setReposTotal(response.total)
+      // this.setRepos([...this.repos, ...response.repos])
+      this.setRepos([...response.repos])
 
-      if (offset === 0) {
-        this.resetReposOffset()
-        this.setRepos(response.data)
-      } else {
-        console.log('loaded more repos')
-        this.setRepos([...this.repos, ...response.data])
-      }
+      // if (offset === 0) {
+      //   this.resetReposOffset()
+      //   this.setRepos(response.data)
+      // } else {
+      //   console.log('loaded more repos')
+      //   this.setRepos([...this.repos, ...response.data])
+      // }
 
-      this.incrementReposOffset(limit)
+      // this.incrementReposOffset(limit)
 
       this.setRepoLoading(false)
     } catch (e) {
       this.setRepos([])
       this.setRepoLoading(false)
-      console.log('getPosts', e.message)
+      console.log('getRepos', e.message)
     }
   }).bind(this)
 }
