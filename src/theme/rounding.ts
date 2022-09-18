@@ -1,3 +1,3 @@
 export const rounding = {
-  regular: 10,
+  regular: 12,
 }

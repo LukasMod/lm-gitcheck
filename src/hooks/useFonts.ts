@@ -2,7 +2,7 @@ import * as Font from 'expo-font'
 
 export const useFonts = async () =>
   await Font.loadAsync({
-    'Montserrat-Regular': require('../../assets/fonts/Montserrat-Regular.ttf'),
-    'Montserrat-Medium': require('../../assets/fonts/Montserrat-Medium.ttf'),
-    'Montserrat-SemiBold': require('../../assets/fonts/Montserrat-SemiBold.ttf'),
+    'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf'),
+    'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf'),
+    'Roboto-Bold': require('../../assets/fonts/Roboto-Bold.ttf'),
   })
