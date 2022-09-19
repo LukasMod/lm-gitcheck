@@ -1,7 +1,9 @@
 import { makeObservable, observable, action, flow } from 'mobx'
+import { Alert } from 'react-native'
 import repoApi from '../services/repo-api'
 import { GetReposResult, IRepo } from '../types'
 import RootStore from './root-store'
+import debounce from 'lodash.debounce'
 
 export default class RepoStore {
   rootStore: RootStore
@@ -49,7 +51,7 @@ export default class RepoStore {
 
   getRepos = flow(function* (this: RepoStore, searchText: string, page: number, perPage?: number) {
     try {
-      if (this.repoLoading) return
+      // if (this.repoLoading) return
 
       // if (offset > this.reposTotal) {
       //   console.log('reached getRepos total')
@@ -57,6 +59,7 @@ export default class RepoStore {
       // }
 
       this.setRepoLoading(true)
+
       const response: GetReposResult = yield repoApi.getRepos(searchText, page, perPage)
       if (response.kind !== 'ok') throw Error(response.kind)
 
@@ -76,9 +79,17 @@ export default class RepoStore {
 
       this.setRepoLoading(false)
     } catch (e) {
-      this.setRepos([])
       this.setRepoLoading(false)
-      console.log('getRepos', e.message)
+      console.log('getRepos', e)
+      if (e.message === 'forbidden') {
+        Alert.alert('Search limit reached, try again later')
+      } else {
+        this.setRepos([])
+      }
     }
   }).bind(this)
+
+  getReposDebounce = debounce((searchText: string) => {
+    this.getRepos(searchText, 1, 20)
+  }, 500)
 }

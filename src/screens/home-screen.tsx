@@ -1,9 +1,7 @@
-import { useNavigation } from '@react-navigation/native'
 import React, { useEffect } from 'react'
-import { Text, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { View, ViewStyle } from 'react-native'
 import { InputSearchbar, RepoList } from '../components'
 import { spacing } from '../theme'
-import { HomeScreenNavProp } from '../types/navigation'
 import { observer, useLocalObservable } from 'mobx-react-lite'
 
 import { useStores } from '../hooks'
@@ -27,19 +25,17 @@ class LocalStore {
 }
 
 export const HomeScreen = observer(() => {
-  const navigation = useNavigation<HomeScreenNavProp>()
-
   const { searchText, setSearchText } = useLocalObservable(() => new LocalStore())
 
   const {
     stores: {
-      repoStore: { getRepos, setRepos },
+      repoStore: { setRepos, getReposDebounce },
     },
   } = useStores()
 
   useEffect(() => {
     if (searchText.length) {
-      getRepos(searchText, 1, 10)
+      getReposDebounce(searchText)
     } else {
       setRepos([])
     }

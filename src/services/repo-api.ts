@@ -1,6 +1,7 @@
 import { ApiResponse } from 'apisauce'
 import { Api } from '.'
 import { GetReposResult, IReposApi } from '../types'
+import { getGeneralApiProblem } from './api-problem'
 
 export const mock = [
   {
@@ -223,22 +224,27 @@ export const mock = [
 class RepoApi {
   async getRepos(searchText: string, page: number, perPage?: number): Promise<GetReposResult> {
     try {
-      // const response: ApiResponse<IReposApi> = await Api.apisauce.get('/search/repositories', {
-      //   q: searchText,
-      //   page,
-      //   per_page: perPage,
-      // })
+      const response: ApiResponse<IReposApi> = await Api.apisauce.get('/search/repositories', {
+        q: searchText,
+        page,
+        per_page: perPage,
+      })
 
-      // const repos = response.data.items
-      // const total = response.data.total_count
+      if (!response.ok) {
+        const problem = getGeneralApiProblem(response)
+        console.log('TEST problem', problem)
+        if (problem) {
+          throw problem
+        }
+      }
 
       // console.log('TEST response 0', response.data.items[0])
       // console.log('TEST response 1', response.data.items[1])
 
-      // return { kind: 'ok', repos: response.data.items, total: response.data.total_count }
-      return { kind: 'ok', repos: mock, total: 2 }
+      return { kind: 'ok', repos: response?.data?.items, total: response?.data?.total_count }
+      // return { kind: 'ok', repos: mock, total: 2 }
     } catch (e) {
-      throw Error(e)
+      throw Error(e.kind)
     }
   }
 }

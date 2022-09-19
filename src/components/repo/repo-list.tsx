@@ -15,21 +15,17 @@ import { useStores } from '../../hooks'
 import { color, spacing, tpRegularTextXL } from '../../theme'
 import { IRepo } from '../../types'
 import { metrics } from '../../utils'
-import { Icon } from '../icon/icon'
 import { icons, Icons } from '../icon/icons'
 import { RepoItem } from './repo-item'
 
-const CONTENT: ViewStyle = {
-  // paddingHorizontal: spacing.screenTop,
-}
+const CONTENT: ViewStyle = {}
 const LOADING: ViewStyle = {
-  marginVertical: 30,
+  marginVertical: 30, // FIXME: styling
 }
 const EMPTY_CONTAINER: ViewStyle = {
   marginTop: 60,
   justifyContent: 'center',
   alignItems: 'center',
-  // backgroundColor: 'red',
 }
 const TEXT: TextStyle = {
   ...tpRegularTextXL,
@@ -40,7 +36,6 @@ const TEXT: TextStyle = {
 const IMAGE: ImageStyle = {
   resizeMode: 'contain',
   width: metrics.screenWidth * 0.7,
-  // backgroundColor: 'blue',
 }
 const SEPARATOR: ViewStyle = {
   height: 20,
@@ -73,17 +68,21 @@ interface IRepoList {
 export const RepoList = observer(({ searchText }: IRepoList) => {
   const {
     stores: {
-      repoStore: { repos },
+      repoStore: { repos, repoLoading },
     },
   } = useStores()
 
-  // if (!repos) {
-  //   return (
-  //     <View>
-  //       <Text>`We couldn’t find anything for ${searchText}`</Text>
-  //     </View>
-  //   )
-  // }
+  if (!repos) {
+    return (
+      <View>
+        <Text>`We couldn’t find anything for ${searchText}`</Text>
+      </View>
+    )
+  }
+
+  if (repoLoading) {
+    return <ActivityIndicator color={color.description} />
+  }
 
   return (
     <FlatList
@@ -97,7 +96,7 @@ export const RepoList = observer(({ searchText }: IRepoList) => {
       onEndReachedThreshold={0.7}
       ItemSeparatorComponent={separatorItem}
       ListEmptyComponent={
-        !searchText && (
+        searchText && (
           <View style={EMPTY_CONTAINER}>
             <Text style={TEXT}>{`We couldn’t find anything for ${searchText}`}</Text>
             <Image source={icons[Icons.IMAGE_QUESTION_MARK]} style={IMAGE} />
