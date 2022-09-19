@@ -2,7 +2,7 @@ import { ApiResponse } from 'apisauce'
 import { Api } from '.'
 import { GetReposResult, IReposApi } from '../types'
 
-const mock = [
+export const mock = [
   {
     allow_forking: true,
     archive_url: 'https://api.github.com/repos/mobxjs/mobx/{archive_format}{/ref}',
@@ -223,7 +223,6 @@ const mock = [
 class RepoApi {
   async getRepos(searchText: string, page: number, perPage?: number): Promise<GetReposResult> {
     try {
-      // api call
       // const response: ApiResponse<IReposApi> = await Api.apisauce.get('/search/repositories', {
       //   q: searchText,
       //   page,

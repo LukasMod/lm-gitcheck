@@ -2,7 +2,7 @@ import React from 'react'
 import { DetailsScreen, HomeScreen } from '../screens'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { HomeStackNavigatorParamList } from '../types/navigation'
-import { color, fontSize, typography } from '../theme'
+import { color, fontSize, tpRegularTextXL, typography } from '../theme'
 import { Icon } from '../components'
 import { observer } from 'mobx-react-lite'
 import { Icons } from '../components/icon/icons'
@@ -10,12 +10,9 @@ import { Icons } from '../components/icon/icons'
 export const HomeStack = createNativeStackNavigator<HomeStackNavigatorParamList>()
 
 const headerTitleStyle = {
-  fontFamily: typography.bold,
-  fontSize: fontSize.l,
+  fontFamily: typography.regular,
+  fontSize: fontSize.xl,
   color: color.text,
-}
-const headerStyle = {
-  backgroundColor: color.background,
 }
 
 export const HomeStackNavigator = observer(() => {
@@ -23,10 +20,10 @@ export const HomeStackNavigator = observer(() => {
     <HomeStack.Navigator
       initialRouteName={'Home'}
       screenOptions={{
-        headerStyle,
         headerTitleStyle,
         headerTitleAlign: 'center',
         headerShadowVisible: false,
+        contentStyle: { backgroundColor: color.white },
       }}>
       <HomeStack.Screen
         name="Home"

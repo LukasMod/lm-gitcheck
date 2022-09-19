@@ -57,7 +57,7 @@ export default class RepoStore {
       // }
 
       this.setRepoLoading(true)
-      const response: GetReposResult = yield repoApi.getRepos('mobx', 1, 5)
+      const response: GetReposResult = yield repoApi.getRepos(searchText, page, perPage)
       if (response.kind !== 'ok') throw Error(response.kind)
 
       this.setReposTotal(response.total)

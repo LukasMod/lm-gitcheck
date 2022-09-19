@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { TouchableOpacity, ViewStyle, TextStyle, Text, View, ImageStyle, Image } from 'react-native'
-import { color, rounding, spacing, tpBoldTextL, tpMediumTextM } from '../../theme'
+import { color, rounding, spacing, tpMediumTextL, tpRegularTextM } from '../../theme'
 import { HomeScreenNavProp, IRepo } from '../../types'
 import { metrics } from '../../utils'
 import { observer } from 'mobx-react-lite'
@@ -11,7 +11,7 @@ const CONTAINER: ViewStyle = {
   borderColor: color.border,
   borderWidth: 1,
   borderRadius: rounding.regular,
-  marginVertical: spacing.item / 2,
+  // marginVertical: spacing.item / 2,
 }
 
 const TEXT_CONTAINER: ViewStyle = {
@@ -21,10 +21,10 @@ const TEXT_CONTAINER: ViewStyle = {
 }
 
 const TITLE_TEXT: TextStyle = {
-  ...tpBoldTextL,
+  ...tpMediumTextL,
 }
 const DESCRIPTION_TEXT: TextStyle = {
-  ...tpMediumTextM,
+  ...tpRegularTextM,
 }
 
 const IMAGE: ImageStyle = {

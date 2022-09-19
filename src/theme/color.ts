@@ -3,11 +3,11 @@ import { palette } from './palette'
 export const color = {
   palette,
   white: palette.white,
-  primary: palette.green,
+  primary: palette.violet,
   text: palette.black,
-  descriptionText: palette.gray2,
-  background: palette.gray,
+  description: palette.gray3,
+  background: palette.white,
   error: palette.red,
-  separator: palette.gray3,
-  border: palette.darkPink
+  border: palette.darkPink,
+  separator: palette.gray2,
 }

@@ -33,19 +33,22 @@ export const HomeScreen = observer(() => {
 
   const {
     stores: {
-      repoStore: { getRepos },
+      repoStore: { getRepos, setRepos },
     },
   } = useStores()
 
   useEffect(() => {
-    getRepos()
-  }, [])
-
+    if (searchText.length) {
+      getRepos(searchText, 1, 10)
+    } else {
+      setRepos([])
+    }
+  }, [searchText])
 
   return (
     <View style={FULL}>
       <InputSearchbar setText={setSearchText} text={searchText} />
-      <RepoList />
+      <RepoList searchText={searchText} />
     </View>
   )
 })

@@ -1,5 +1,6 @@
 export const spacing = {
-  screenTop: 30,
+  screenTop: 40,
+  screenHorizontal: 20,
   item: 16,
   itemSmall: 4,
 }
