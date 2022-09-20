@@ -1,6 +1,6 @@
 import { ApiResponse } from 'apisauce'
 import { Api } from '.'
-import { GetReposResult, IReposApi } from '../types'
+import { GetRepoDetailsResult, GetReposResult, IRepoDetailsApi, IReposApi } from '../types'
 import { INCREMENT_DATA } from '../utils'
 import { getGeneralApiProblem } from './api-problem'
 
@@ -20,6 +20,25 @@ class RepoApi {
         }
       }
       return { kind: 'ok', repos: response?.data?.items, total: response?.data?.total_count }
+    } catch (e) {
+      throw Error(e.kind)
+    }
+  }
+
+  async getRepoDetails(owner: string, repoName: string): Promise<GetRepoDetailsResult> {
+    try {
+      const response: ApiResponse<IRepoDetailsApi> = await Api.apisauce.get(
+        `/repos/${owner}/${repoName}`
+      )
+
+      if (!response.ok) {
+        const problem = getGeneralApiProblem(response)
+        if (problem) {
+          throw problem
+        }
+      }
+
+      return { kind: 'ok', repoDetails: response?.data }
     } catch (e) {
       throw Error(e.kind)
     }

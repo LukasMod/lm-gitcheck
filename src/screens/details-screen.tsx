@@ -1,24 +1,30 @@
 import { useNavigation, useRoute } from '@react-navigation/native'
 import React, { useEffect } from 'react'
-import { View, ViewStyle, Text, TextStyle, Image, ImageStyle } from 'react-native'
-import { spacing, tpMediumTextL, tpRegularTextM } from '../theme'
+import {
+  View,
+  ViewStyle,
+  Text,
+  TextStyle,
+  Image,
+  ImageStyle,
+  ActivityIndicator,
+} from 'react-native'
+import { color, spacing, tpMediumTextL, tpRegularTextM } from '../theme'
 import { DetailsScreenRouteProp, DetailsScreenNavProp } from '../types/navigation'
-import { observer } from 'mobx-react-lite'
-
+import { observer, useLocalObservable } from 'mobx-react-lite'
 import { useStores } from '../hooks'
-import { mock } from '../services/repo-api'
 import { Section } from '../components'
 import { Icons } from '../components/icon/icons'
 import { metrics } from '../utils'
+import { makeAutoObservable } from 'mobx'
+import { IRepoDetails } from '../types'
 
 const FULL: ViewStyle = {
   flex: 1,
   paddingVertical: spacing.item,
   paddingHorizontal: spacing.screenHorizontal,
 }
-// const TEXT_NO_DATA: TextStyle = {
-//   padding: spacing.screenTop,
-// }
+
 const IMAGE: ImageStyle = {
   width: '100%',
   height: metrics.screenHeight * 0.4,
@@ -31,42 +37,90 @@ const TEXT_CONTAINER: ViewStyle = {
 const TITLE_TEXT: TextStyle = {
   ...tpMediumTextL,
 }
+
 const DESCRIPTION_TEXT: TextStyle = {
   ...tpRegularTextM,
+}
+
+const NO_DATA_TEXT: TextStyle = {
+  ...tpMediumTextL,
+  textAlign: 'center',
+  marginTop: 100,
+}
+
+class LocalStore {
+  constructor() {
+    makeAutoObservable(this)
+  }
+
+  isLoading = false
+  repoDetails: IRepoDetails = null
+
+  setLoading = (isLoading: boolean) => {
+    this.isLoading = isLoading
+  }
+
+  setRepoDetails = (repoDetails: IRepoDetails) => {
+    this.repoDetails = repoDetails
+  }
 }
 
 export const DetailsScreen = observer(() => {
   const route = useRoute<DetailsScreenRouteProp>()
   const navigation = useNavigation<DetailsScreenNavProp>()
 
+  const { isLoading, setLoading, repoDetails, setRepoDetails } = useLocalObservable(
+    () => new LocalStore()
+  )
+
   const repoId = route.params?.repoId || ''
 
   const {
     stores: {
-      repoStore: { repos },
+      repoStore: { repos, getRepoDetails },
     },
   } = useStores()
 
-  const repo = repos.find(r => r.id === repoId)
+  const repoDataFromList = repos.find(r => r.id === repoId)
 
-  // const repo = mock[0]
+  const fetchData = async () => {
+    setLoading(true)
+    const result = await getRepoDetails(repoDataFromList.owner.login, repoDataFromList.name)
+    setRepoDetails(result)
+    setLoading(false)
+  }
 
   useEffect(() => {
-    if (repo) {
-      navigation.setOptions({ headerTitle: repo.name })
+    if (repoDataFromList) {
+      navigation.setOptions({ headerTitle: repoDataFromList.name })
+      fetchData()
     }
-  }, [repo])
+  }, [repoDataFromList])
+
+  if (isLoading) {
+    return <ActivityIndicator color={color.description} size="large" />
+  }
+
+  if (!repoDetails || !repoDataFromList) {
+    return (
+      <View style={FULL}>
+        <Text style={NO_DATA_TEXT}>
+          Ups... there was some problems with data. Please move back and try again
+        </Text>
+      </View>
+    )
+  }
 
   return (
     <View style={FULL}>
-      <Image source={{ uri: repo.owner.avatar_url }} style={IMAGE} />
+      <Image source={{ uri: repoDetails.owner.avatar_url }} style={IMAGE} />
       <View style={TEXT_CONTAINER}>
         <Text style={TITLE_TEXT}>About</Text>
-        <Text style={DESCRIPTION_TEXT}>{repo.description}</Text>
+        <Text style={DESCRIPTION_TEXT}>{repoDetails.description}</Text>
       </View>
-      <Section title="Forks" value={repo.forks_count} icon={Icons.FORK} />
-      <Section title="Stars" value={repo.stargazers_count} icon={Icons.STAR} />
-      <Section title="Watchers" value={repo.watchers_count} icon={Icons.EYE} />
+      <Section title="Forks" value={repoDetails.forks_count} icon={Icons.FORK} />
+      <Section title="Stars" value={repoDetails.stargazers_count} icon={Icons.STAR} />
+      <Section title="Watchers" value={repoDetails.subscribers_count} icon={Icons.EYE} />
     </View>
   )
 })

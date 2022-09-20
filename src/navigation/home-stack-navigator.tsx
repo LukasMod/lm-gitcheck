@@ -2,10 +2,11 @@ import React from 'react'
 import { DetailsScreen, HomeScreen } from '../screens'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { HomeStackNavigatorParamList } from '../types/navigation'
-import { color, fontSize, tpRegularTextXL, typography } from '../theme'
+import { color, fontSize, typography } from '../theme'
 import { Icon } from '../components'
 import { observer } from 'mobx-react-lite'
 import { Icons } from '../components/icon/icons'
+import { ViewStyle } from 'react-native'
 
 export const HomeStack = createNativeStackNavigator<HomeStackNavigatorParamList>()
 
@@ -13,6 +14,10 @@ const headerTitleStyle = {
   fontFamily: typography.regular,
   fontSize: fontSize.xl,
   color: color.text,
+}
+
+const BASE: ViewStyle = {
+  backgroundColor: color.white,
 }
 
 export const HomeStackNavigator = observer(() => {
@@ -23,7 +28,7 @@ export const HomeStackNavigator = observer(() => {
         headerTitleStyle,
         headerTitleAlign: 'center',
         headerShadowVisible: false,
-        contentStyle: { backgroundColor: color.white },
+        contentStyle: BASE,
       }}>
       <HomeStack.Screen
         name="Home"

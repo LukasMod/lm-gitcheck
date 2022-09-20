@@ -1,10 +1,9 @@
 import { makeObservable, observable, action, flow } from 'mobx'
 import { Alert } from 'react-native'
 import repoApi from '../services/repo-api'
-import { GetReposResult, IRepo } from '../types'
+import { GetRepoDetailsResult, GetReposResult, IRepo } from '../types'
 import RootStore from './root-store'
 import debounce from 'lodash.debounce'
-import { delay } from '../utils/helpers'
 
 export default class RepoStore {
   rootStore: RootStore
@@ -93,7 +92,7 @@ export default class RepoStore {
     } catch (e) {
       console.log('getReposMore', e)
       if (e.message === 'forbidden') {
-        Alert.alert('Search limit reached, try again later')
+        Alert.alert('Api limit reached, try again later')
       }
     }
   }).bind(this)
@@ -105,4 +104,20 @@ export default class RepoStore {
       this.setRepos([])
     }
   }, 500)
+
+  getRepoDetails = flow(function* (this: RepoStore, owner: string, repoName: string) {
+    try {
+      const response: GetRepoDetailsResult = yield repoApi.getRepoDetails(owner, repoName)
+      if (response.kind !== 'ok') {
+        throw Error(response.kind)
+      }
+      return response.repoDetails
+    } catch (e) {
+      console.log('getRepoDetails', e)
+      if (e.message === 'forbidden') {
+        Alert.alert('Api limit reached, try again later')
+      }
+      return null
+    }
+  }).bind(this)
 }
