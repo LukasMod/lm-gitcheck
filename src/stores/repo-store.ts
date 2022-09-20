@@ -4,37 +4,41 @@ import repoApi from '../services/repo-api'
 import { GetReposResult, IRepo } from '../types'
 import RootStore from './root-store'
 import debounce from 'lodash.debounce'
+import { delay } from '../utils/helpers'
 
 export default class RepoStore {
   rootStore: RootStore
   repos: IRepo[] = []
-  reposOffset = 0
+  reposPage = 1
   reposTotal = 0
   repoLoading = false
+  reposEmpty = false
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore
 
     makeObservable(this, {
       repos: observable,
-      reposOffset: observable,
+      reposPage: observable,
       reposTotal: observable,
       repoLoading: observable,
+      reposEmpty: observable,
 
-      incrementReposOffset: action,
-      resetReposOffset: action,
+      incrementReposPage: action,
+      resetReposPage: action,
       setRepoLoading: action,
       setRepos: action,
       setReposTotal: action,
+      setReposEmpty: action,
     })
   }
 
-  incrementReposOffset = (limit: number) => {
-    this.reposOffset = this.reposOffset + limit
+  incrementReposPage = () => {
+    this.reposPage = this.reposPage + 1
   }
 
-  resetReposOffset = () => {
-    this.reposOffset = 0
+  resetReposPage = () => {
+    this.reposPage = 1
   }
 
   setRepoLoading = (isLoading: boolean) => {
@@ -49,47 +53,56 @@ export default class RepoStore {
     this.reposTotal = total
   }
 
-  getRepos = flow(function* (this: RepoStore, searchText: string, page: number, perPage?: number) {
+  setReposEmpty = (isEmpty: boolean) => {
+    this.reposEmpty = isEmpty
+  }
+
+  getRepos = flow(function* (this: RepoStore, searchText?: string, loading?: boolean) {
     try {
-      // if (this.repoLoading) return
-
-      // if (offset > this.reposTotal) {
-      //   console.log('reached getRepos total')
-      //   return
-      // }
-
-      this.setRepoLoading(true)
-
-      const response: GetReposResult = yield repoApi.getRepos(searchText, page, perPage)
+      loading && this.setRepoLoading(true)
+      const response: GetReposResult = yield repoApi.getRepos(searchText, 1)
       if (response.kind !== 'ok') throw Error(response.kind)
 
+      this.setReposEmpty(Boolean(!response.total))
       this.setReposTotal(response.total)
-      // this.setRepos([...this.repos, ...response.repos])
       this.setRepos([...response.repos])
-
-      // if (offset === 0) {
-      //   this.resetReposOffset()
-      //   this.setRepos(response.data)
-      // } else {
-      //   console.log('loaded more repos')
-      //   this.setRepos([...this.repos, ...response.data])
-      // }
-
-      // this.incrementReposOffset(limit)
-
-      this.setRepoLoading(false)
     } catch (e) {
-      this.setRepoLoading(false)
       console.log('getRepos', e)
       if (e.message === 'forbidden') {
         Alert.alert('Search limit reached, try again later')
       } else {
         this.setRepos([])
       }
+    } finally {
+      this.setRepoLoading(false)
+    }
+  }).bind(this)
+
+  getReposMore = flow(function* (this: RepoStore, searchText?: string) {
+    try {
+      if (this.repos.length === this.reposTotal) {
+        console.log('Reached getRepos total')
+        return
+      }
+      const response: GetReposResult = yield repoApi.getRepos(searchText, this.reposPage + 1)
+      if (response.kind !== 'ok') throw Error(response.kind)
+
+      this.setRepos([...this.repos, ...response.repos])
+      this.setReposTotal(response.total)
+      this.incrementReposPage()
+    } catch (e) {
+      console.log('getReposMore', e)
+      if (e.message === 'forbidden') {
+        Alert.alert('Search limit reached, try again later')
+      }
     }
   }).bind(this)
 
   getReposDebounce = debounce((searchText: string) => {
-    this.getRepos(searchText, 1, 20)
+    if (searchText.length) {
+      this.getRepos(searchText, true)
+    } else {
+      this.setRepos([])
+    }
   }, 500)
 }

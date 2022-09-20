@@ -14,7 +14,6 @@ export interface IInputSearchBar {
 const CONTAINER: ViewStyle = {
   backgroundColor: color.white,
   height: 51,
-  marginHorizontal: 23,
   justifyContent: 'flex-start',
   alignItems: 'center',
   padding: 12,

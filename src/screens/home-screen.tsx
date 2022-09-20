@@ -10,6 +10,7 @@ import { makeAutoObservable } from 'mobx'
 const FULL: ViewStyle = {
   flex: 1,
   paddingTop: spacing.screenTop,
+  paddingHorizontal: spacing.screenHorizontal,
 }
 
 class LocalStore {
@@ -29,16 +30,12 @@ export const HomeScreen = observer(() => {
 
   const {
     stores: {
-      repoStore: { setRepos, getReposDebounce },
+      repoStore: { getReposDebounce },
     },
   } = useStores()
 
   useEffect(() => {
-    if (searchText.length) {
-      getReposDebounce(searchText)
-    } else {
-      setRepos([])
-    }
+    getReposDebounce(searchText)
   }, [searchText])
 
   return (

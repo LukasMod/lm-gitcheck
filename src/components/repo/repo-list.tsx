@@ -12,18 +12,26 @@ import {
   TextStyle,
 } from 'react-native'
 import { useStores } from '../../hooks'
-import { color, spacing, tpRegularTextXL } from '../../theme'
+import { color, tpRegularTextXL } from '../../theme'
 import { IRepo } from '../../types'
 import { metrics } from '../../utils'
+import { FooterLoading } from '../footer/footer-loading'
 import { icons, Icons } from '../icon/icons'
 import { RepoItem } from './repo-item'
 
-const CONTENT: ViewStyle = {}
-const LOADING: ViewStyle = {
-  marginVertical: 30, // FIXME: styling
+const CONTENT: ViewStyle = {
+  marginTop: 30,
+  flex: 1,
 }
+const LIST: ViewStyle = {
+  paddingBottom: 30,
+}
+const LOADING: ViewStyle = {
+  flex: 1,
+}
+
 const EMPTY_CONTAINER: ViewStyle = {
-  marginTop: 60,
+  marginTop: 30,
   justifyContent: 'center',
   alignItems: 'center',
 }
@@ -55,9 +63,14 @@ class LocalStore {
   }
 
   isRefreshing = false
+  isRefreshingMore = false
 
   setIsRefreshing = (isRefreshing: boolean) => {
     this.isRefreshing = isRefreshing
+  }
+
+  setIsRefreshingMore = (isRefreshing: boolean) => {
+    this.isRefreshingMore = isRefreshing
   }
 }
 
@@ -68,9 +81,25 @@ interface IRepoList {
 export const RepoList = observer(({ searchText }: IRepoList) => {
   const {
     stores: {
-      repoStore: { repos, repoLoading },
+      repoStore: { repos, repoLoading, getRepos, getReposMore, reposEmpty },
     },
   } = useStores()
+
+  const { isRefreshing, isRefreshingMore, setIsRefreshing, setIsRefreshingMore } =
+    useLocalObservable(() => new LocalStore())
+
+  const onEndReached = async () => {
+    if (isRefreshingMore) return
+    setIsRefreshingMore(true)
+    await getReposMore(searchText)
+    setIsRefreshingMore(false)
+  }
+
+  const onRefresh = async () => {
+    setIsRefreshing(true)
+    await getRepos(searchText)
+    setIsRefreshing(false)
+  }
 
   if (!repos) {
     return (
@@ -81,28 +110,33 @@ export const RepoList = observer(({ searchText }: IRepoList) => {
   }
 
   if (repoLoading) {
-    return <ActivityIndicator color={color.description} />
+    return <ActivityIndicator color={color.description} style={LOADING} size="large" />
   }
 
   return (
-    <FlatList
-      contentContainerStyle={CONTENT}
-      data={repos}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      // onRefresh={onRefresh}
-      // refreshing={isRefreshing}
-      // onEndReached={loadMorePosts}
-      onEndReachedThreshold={0.7}
-      ItemSeparatorComponent={separatorItem}
-      ListEmptyComponent={
-        searchText && (
-          <View style={EMPTY_CONTAINER}>
-            <Text style={TEXT}>{`We couldn’t find anything for ${searchText}`}</Text>
-            <Image source={icons[Icons.IMAGE_QUESTION_MARK]} style={IMAGE} />
-          </View>
-        )
-      }
-    />
+    <View style={CONTENT}>
+      <FlatList
+        data={repos}
+        contentContainerStyle={LIST}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        onRefresh={onRefresh}
+        refreshing={isRefreshing}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.5}
+        showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={separatorItem}
+        ListEmptyComponent={
+          searchText &&
+          reposEmpty && (
+            <View style={EMPTY_CONTAINER}>
+              <Text style={TEXT}>{`We couldn’t find anything for ${searchText}`}</Text>
+              <Image source={icons[Icons.IMAGE_QUESTION_MARK]} style={IMAGE} />
+            </View>
+          )
+        }
+        ListFooterComponent={<FooterLoading isLoading={isRefreshingMore} />}
+      />
+    </View>
   )
 })
