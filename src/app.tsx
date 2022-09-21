@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { RootNavigator } from './navigation/root-navigator'
 import * as SplashScreen from 'expo-splash-screen'
 import { useFonts } from './hooks'
-import { StatusBar } from 'expo-status-bar'
 
 const App = () => {
   const [appIsReady, setAppIsReady] = useState(false)
@@ -32,12 +31,7 @@ const App = () => {
     return null
   }
 
-  return (
-    <>
-      <RootNavigator onReady={onLayoutRootView} />
-      <StatusBar style="auto" />
-    </>
-  )
+  return <RootNavigator onReady={onLayoutRootView} />
 }
 
 export default App

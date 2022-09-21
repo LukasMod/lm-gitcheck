@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react'
-import { View, ViewStyle } from 'react-native'
+import { ViewStyle } from 'react-native'
 import { InputSearchbar, RepoList } from '../components'
 import { spacing } from '../theme'
 import { observer, useLocalObservable } from 'mobx-react-lite'
 
 import { useStores } from '../hooks'
 import { makeAutoObservable } from 'mobx'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-const FULL: ViewStyle = {
+const CONTAINER: ViewStyle = {
   flex: 1,
   paddingTop: spacing.screenTop,
   paddingHorizontal: spacing.screenHorizontal,
@@ -39,9 +40,9 @@ export const HomeScreen = observer(() => {
   }, [searchText])
 
   return (
-    <View style={FULL}>
+    <SafeAreaView style={CONTAINER}>
       <InputSearchbar setText={setSearchText} text={searchText} />
       <RepoList searchText={searchText} />
-    </View>
+    </SafeAreaView>
   )
 })

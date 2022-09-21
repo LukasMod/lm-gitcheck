@@ -19,7 +19,7 @@ import { metrics } from '../utils'
 import { makeAutoObservable } from 'mobx'
 import { IRepoDetails } from '../types'
 
-const FULL: ViewStyle = {
+const CONTAINER: ViewStyle = {
   flex: 1,
   paddingVertical: spacing.item,
   paddingHorizontal: spacing.screenHorizontal,
@@ -103,7 +103,7 @@ export const DetailsScreen = observer(() => {
 
   if (!repoDetails || !repoDataFromList) {
     return (
-      <View style={FULL}>
+      <View style={CONTAINER}>
         <Text style={NO_DATA_TEXT}>
           Ups... there was some problems with data. Please move back and try again
         </Text>
@@ -112,7 +112,7 @@ export const DetailsScreen = observer(() => {
   }
 
   return (
-    <View style={FULL}>
+    <View style={CONTAINER}>
       <Image source={{ uri: repoDetails.owner.avatar_url }} style={IMAGE} />
       <View style={TEXT_CONTAINER}>
         <Text style={TITLE_TEXT}>About</Text>

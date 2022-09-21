@@ -29,6 +29,7 @@ const TEXT: TextStyle = {
   ...tpRegularTextL,
   paddingHorizontal: 10,
   flex: 1,
+  lineHeight: 20
 }
 
 export const InputSearchbar = observer(({ setText, text }: IInputSearchBar) => {
