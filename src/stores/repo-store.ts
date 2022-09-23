@@ -64,7 +64,7 @@ export default class RepoStore {
 
       this.setReposEmpty(Boolean(!response.total))
       this.setReposTotal(response.total)
-      this.setRepos([...response.repos])
+      this.setRepos(response.repos)
     } catch (e) {
       console.log('getRepos', e)
       if (e.message === 'forbidden') {
